@@ -37,7 +37,7 @@ Login-Shell — sonst findet der WezTerm-Loader das Repo nicht.
 ### 2. Klonen und installieren
 
 ```bash
-git clone https://github.com/StefanBartl/Configs.git "$REPOS_DIR/Configs"
+git clone https://github.com/WKDSteve/Configs.git "$REPOS_DIR/Configs"
 ```
 
 ```bash

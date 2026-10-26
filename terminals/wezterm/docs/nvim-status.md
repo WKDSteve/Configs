@@ -1,7 +1,7 @@
 # Neovim status in the tab title and right status
 
 `config/nvim_status.lua` shows what the Neovim in a pane is doing. The data comes from
-[terminal.nvim](https://github.com/StefanBartl/terminal.nvim), which publishes it as per-pane
+[terminal.nvim](https://github.com/WKDSteve/terminal.nvim), which publishes it as per-pane
 user variables (OSC 1337 `SetUserVar`); nothing here talks to Neovim.
 
 ## Variables

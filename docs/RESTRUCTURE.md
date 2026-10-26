@@ -9,7 +9,7 @@
 
 ## 0. Erledigt: Exponierte Zugangsdaten (2026-08-20)
 
-`StefanBartl/Configs` war **public** und enthielt getrackte Zugangsdaten.
+`WKDSteve/Configs` war **public** und enthielt getrackte Zugangsdaten.
 Erstmals eingecheckt mit Commit `b92cb6e`, seither durchgehend in `main`.
 
 Betroffen waren:
@@ -120,8 +120,8 @@ Merge ist die richtige Richtung — aber nicht in diesen Zustand hinein.
 | Layer | Inhalt | Deployment | Ziel | Status |
 |---|---|---|---|---|
 | **A — Dotfiles** | zsh, pwsh, wezterm, kitty, tmux, starship, bash, CLI-Tools | Symlink / Loader | 1 Repo, public, klein | bleibt in `Configs`, Umbau offen (Abschnitt 3–4) |
-| **B — Assets & Backups** | Fonts, VPN, iCue, Audio, Bookmarks, Software-Listen, Gaomon | wird nie verlinkt | privates Repo | ✅ migriert nach [`StefanBartl/machine-assets`](https://github.com/StefanBartl/machine-assets) (privat), 2026-08-20 |
-| **C — Eigenständige Projekte** | `OpenInNvim` (C#-App) | eigenes Build/Deploy | eigenes Repo | ✅ migriert nach [`StefanBartl/openinnvim`](https://github.com/StefanBartl/openinnvim) (public), 2026-08-20 |
+| **B — Assets & Backups** | Fonts, VPN, iCue, Audio, Bookmarks, Software-Listen, Gaomon | wird nie verlinkt | privates Repo | ✅ migriert nach [`WKDSteve/machine-assets`](https://github.com/WKDSteve/machine-assets) (privat), 2026-08-20 |
+| **C — Eigenständige Projekte** | `OpenInNvim` (C#-App) | eigenes Build/Deploy | eigenes Repo | ✅ migriert nach [`WKDSteve/openinnvim`](https://github.com/WKDSteve/openinnvim) (public), 2026-08-20 |
 | **D — Secrets** | API-Keys, VPN-Schlüssel | Runtime-Load | nie in Git (`my-zsh`-Muster) | ✅ erledigt, siehe Abschnitt 0 |
 
 Layer A ist exakt die Menge, die gemeinsam installiert wird und sich

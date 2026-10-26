@@ -17,7 +17,7 @@ diesen Schnitt steht in [docs/RESTRUCTURE.md](./docs/RESTRUCTURE.md).
 | Ordner | Inhalt |
 | ------ | ------ |
 | `install/` | Manifest `links.conf` + `install.sh` / `install.ps1` — [README](./install/README.md) |
-| `shells/` | `bash/`, `pwsh/` (Profil, `MyCliHelpers`), `zsh/` → Submodul [my-zsh](https://github.com/StefanBartl/my-zsh) |
+| `shells/` | `bash/`, `pwsh/` (Profil, `MyCliHelpers`), `zsh/` → Submodul [my-zsh](https://github.com/WKDSteve/my-zsh) |
 | `terminals/` | `wezterm/` (modular, `init.lua`), `kitty/`, `tmux/`, `windows-terminal/` |
 | `prompt/` | `starship.toml` — von zsh **und** pwsh geteilt, deshalb eigener Ordner |
 | `cli/` | `lazygit`, `glow` |
@@ -28,7 +28,7 @@ diesen Schnitt steht in [docs/RESTRUCTURE.md](./docs/RESTRUCTURE.md).
 ## Einrichten
 
 ```bash
-git clone https://github.com/StefanBartl/Configs.git "$REPOS_DIR/Configs"
+git clone https://github.com/WKDSteve/Configs.git "$REPOS_DIR/Configs"
 ```
 
 ```bash
