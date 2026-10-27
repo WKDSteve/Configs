@@ -4,31 +4,30 @@
 ---@param Config WezTerm.Config
 ---@return nil
 return function(Config)
+  -- Config.window_background_opacity = 0.7 -- nice!
+  Config.window_background_opacity = 0.85
+  -- Config.color_scheme = 'tokyonight'
+  -- Config.color_scheme = 'Nova (base16)'
+  -- Config.color_scheme = 'Duotone Dark'
+  -- Config.color_scheme = 'DjangoSmooth' -- helleres grün
+  -- Config.color_scheme = 'Django' -- dunkleres grüm
+  -- Config.color_scheme = 'darkmatrix' -- mehr dunkles grün
+  Config.color_scheme = "Dark Violet (base16)"
+  -- Config.color_scheme = 'Cobalt Neon (Gogh)'
 
-	-- Config.window_background_opacity = 0.7 -- nice!
-	Config.window_background_opacity = 0.85
-	-- Config.color_scheme = 'tokyonight'
-	-- Config.color_scheme = 'Nova (base16)'
-	-- Config.color_scheme = 'Duotone Dark'
-	-- Config.color_scheme = 'DjangoSmooth' -- helleres grün
-	-- Config.color_scheme = 'Django' -- dunkleres grüm
-	-- Config.color_scheme = 'darkmatrix' -- mehr dunkles grün
-	Config.color_scheme = 'Dark Violet (base16)'
-	-- Config.color_scheme = 'Cobalt Neon (Gogh)'
-
-	--  Config.tab_bar_at_bottom = true
-	--  Config.use_fancy_tab_bar = true
-	--  Config.hide_tab_bar_if_only_one_tab = false
-	--  Config.show_new_tab_button_in_tab_bar = false
+  --  Config.tab_bar_at_bottom = true
+  --  Config.use_fancy_tab_bar = true
+  --  Config.hide_tab_bar_if_only_one_tab = false
+  --  Config.show_new_tab_button_in_tab_bar = false
 
   -- Add an explicit orange border around the window
   -- Width units can be 'px', 'pt' or cell-relative strings like '0.5cell'.
   -- Config.window_frame = {
 
-      -- active_titlebar_bg   = "#1e1e1e",
-      -- inactive_titlebar_bg            = "#1e1e1e",
-      -- active_titlebar_border_bottom   = "#ffa500",
-      -- inactive_titlebar_border_bottom = "#ffa500",
+  -- active_titlebar_bg   = "#1e1e1e",
+  -- inactive_titlebar_bg            = "#1e1e1e",
+  -- active_titlebar_border_bottom   = "#ffa500",
+  -- inactive_titlebar_border_bottom = "#ffa500",
   --
   --   border_left_width    = "0.1cell",
   --   border_right_width   = "0.1cell",

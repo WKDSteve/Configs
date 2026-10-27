@@ -99,7 +99,9 @@ local function configure_windows_shell(Config)
 
   -- Nichts gefunden: pwsh ueber den PATH versuchen, den Rest macht WezTerm.
   Config.default_prog = { "pwsh.exe", "-NoLogo" }
-  wezterm.log_error("[config.powershell] Keine PowerShell an bekannten Pfaden — versuche pwsh.exe aus dem PATH.")
+  wezterm.log_error(
+    "[config.powershell] Keine PowerShell an bekannten Pfaden — versuche pwsh.exe aus dem PATH."
+  )
   return Config
 end
 

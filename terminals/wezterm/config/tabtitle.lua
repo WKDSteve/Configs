@@ -19,34 +19,34 @@ local nvim_status = require("config.nvim_status")
 
 local OPT = {
   -- Flip between modes
-  flip_enabled          = true,      -- enable periodic flip
-  flip_period_sec       = 5,         -- 7) seconds until toggle
-  flip_modes            = { "cwd", "process" },
+  flip_enabled = true, -- enable periodic flip
+  flip_period_sec = 5, -- 7) seconds until toggle
+  flip_modes = { "cwd", "process" },
 
   -- CWD shortening rules
-  cwd_body_len          = 20,        -- 2) ".../last" budget (cells)
-  cwd_body_len_parent2  = 25,        -- 2) ".../prev/last" budget (cells)
-  max_title_len         = 80,        -- final safety truncation (cells)
+  cwd_body_len = 20, -- 2) ".../last" budget (cells)
+  cwd_body_len_parent2 = 25, -- 2) ".../prev/last" budget (cells)
+  max_title_len = 80, -- final safety truncation (cells)
 
   -- Width policy
-  fixed_tab_width_enabled = false,   -- 3) false=dyn width; true=fixed width
-  fixed_tab_width         = 40,      -- 4) width in cells when fixed
-  dynamic_tab_width_max   = 48,      -- 4) max tab width when dynamic
+  fixed_tab_width_enabled = false, -- 3) false=dyn width; true=fixed width
+  fixed_tab_width = 40, -- 4) width in cells when fixed
+  dynamic_tab_width_max = 48, -- 4) max tab width when dynamic
 
   -- Centering (applies when fixed_tab_width_enabled = true)
-  center_cwd             = false,    -- 5) center cwd in fixed-width tabs
-  center_process         = false,    -- 6) center process in fixed-width tabs
+  center_cwd = false, -- 5) center cwd in fixed-width tabs
+  center_process = false, -- 6) center process in fixed-width tabs
 
   -- Spacing
-  tab_gap_cells          = 1,        -- gap between tabs (edge width)
-  tab_left_pad_cells     = 1,        -- inner left padding
-  tab_right_pad_cells    = 1,        -- inner right padding
+  tab_gap_cells = 1, -- gap between tabs (edge width)
+  tab_left_pad_cells = 1, -- inner left padding
+  tab_right_pad_cells = 1, -- inner right padding
 
   -- Optional environment prefix
-  show_env_prefix        = false,    -- show [W]/[WSL]/[Linux]
+  show_env_prefix = false, -- show [W]/[WSL]/[Linux]
 
   -- Flip tick for global timer; keeps flip going while idle
-  flip_tick_ms           = 1000,
+  flip_tick_ms = 1000,
 }
 
 ----------------------------------------------------------------
@@ -64,7 +64,9 @@ end
 --- @param str string|nil
 --- @return string
 local function url_decode(str)
-  if not str then return "" end
+  if not str then
+    return ""
+  end
   local out = tostring(str)
   out = out:gsub("%%(%x%x)", function(hex)
     return string.char(tonumber(hex, 16))
@@ -78,7 +80,9 @@ end
 --- @return string
 local function extract_path(uri)
   local s = url_decode(uri)
-  if s == "" then return "" end
+  if s == "" then
+    return ""
+  end
   if not s:match("^file://") then
     return s
   end
@@ -355,7 +359,7 @@ end
 --- @return string
 local function build_process_title(pane)
   local proc = pane_fg_name(pane)
-  local base = proc:gsub(".+[\\/]","")
+  local base = proc:gsub(".+[\\/]", "")
   local t = pane_title(pane)
   if base:lower():match("^n?vim") or t:lower():find("n?vim") then
     return " " .. (t ~= "" and t or "nvim")
@@ -389,14 +393,14 @@ local function themed_tab_colors(config, is_active)
   local palette = (config and config.resolved_palette) or (config and config.colors) or {}
   local tab_bar = palette.tab_bar or {}
 
-  local active  = tab_bar.active_tab   or {}
-  local inact   = tab_bar.inactive_tab or {}
-  local edge    = tab_bar.inactive_tab_edge or tab_bar.background or palette.background or "#222222"
+  local active = tab_bar.active_tab or {}
+  local inact = tab_bar.inactive_tab or {}
+  local edge = tab_bar.inactive_tab_edge or tab_bar.background or palette.background or "#222222"
 
   local bg = is_active and (active.bg_color or palette.background or "#333333")
-                       or  (inact.bg_color  or tab_bar.background or "#1b1032")
+    or (inact.bg_color or tab_bar.background or "#1b1032")
   local fg = is_active and (active.fg_color or palette.foreground or "#c0c0c0")
-                       or  (inact.fg_color  or "#808080")
+    or (inact.fg_color or "#808080")
   return { fg = fg, bg = bg, edge = edge }
 end
 
@@ -504,10 +508,10 @@ wezterm.on("format-tab-title", function(tab, _tabs, _panes, config, _hover, _max
     title = wezterm.truncate_right(title, OPT.max_title_len)
   end
 
-  local left_pad  = string.rep(" ", math.max(0, OPT.tab_left_pad_cells or 0))
+  local left_pad = string.rep(" ", math.max(0, OPT.tab_left_pad_cells or 0))
   local right_pad = string.rep(" ", math.max(0, OPT.tab_right_pad_cells or 0))
   local gap_cells = math.max(0, OPT.tab_gap_cells or 0)
-  local gap_text  = string.rep(" ", gap_cells)
+  local gap_text = string.rep(" ", gap_cells)
 
   local is_fancy = (config and config.use_fancy_tab_bar) and true or false
 

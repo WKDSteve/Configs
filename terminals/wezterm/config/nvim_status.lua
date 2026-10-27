@@ -22,79 +22,79 @@ local M = {}
 
 --- Options; override with `M.setup({ ... })`.
 M.opts = {
-	-- The newest dataset version understood here. A higher one is ignored (shows nothing).
-	max_version = 1,
-	-- Refuse a MUX_STATUS value longer than this many bytes.
-	max_bytes = 2048,
-	-- Also require that the pane's foreground process looks like Neovim. Catches a Neovim that
-	-- died without clearing its variables (the user vars would otherwise stay forever).
-	require_nvim_process = true,
-	-- Names the foreground process may have (lowercase, substring match). A Neovim inside tmux, over
-	-- ssh or in WSL is not the pane's foreground process: tmux / ssh / wsl.exe is, so they count
-	-- (with `allow-passthrough on` the status of a Neovim inside tmux reaches this config).
-	process_names = { "nvim", "tmux", "ssh", "wsl", "mosh" },
-	-- Mode code (first letters of Neovim's mode) -> label and ANSI colour for the right status.
-	modes = {
-		n = { "NORMAL", "Blue" },
-		i = { "INSERT", "Green" },
-		v = { "VISUAL", "Fuchsia" },
-		V = { "V-LINE", "Fuchsia" },
-		-- terminal.nvim spells the control-character modes out: CTRL-V -> "^V", CTRL-S -> "^S"
-		-- (a prefix match: "^Vs" is Visual-block started from Select).
-		["^V"] = { "V-BLOCK", "Fuchsia" },
-		["^S"] = { "SELECT", "Fuchsia" },
-		s = { "SELECT", "Fuchsia" },
-		S = { "S-LINE", "Fuchsia" },
-		R = { "REPLACE", "Red" },
-		c = { "COMMAND", "Yellow" },
-		t = { "TERMINAL", "Aqua" },
-		nt = { "TERM-N", "Aqua" },
-		no = { "OP-PEND", "Blue" },
-	},
-	-- Segment switches for the right status.
-	show_mode = true,
-	show_branch = true,
-	show_diagnostics = true,
-	show_recording = true,
-	-- Icon prefixes; set to "" for none. (Needs a font with the Nerd symbols for the default.)
-	branch_icon = " ",
+  -- The newest dataset version understood here. A higher one is ignored (shows nothing).
+  max_version = 1,
+  -- Refuse a MUX_STATUS value longer than this many bytes.
+  max_bytes = 2048,
+  -- Also require that the pane's foreground process looks like Neovim. Catches a Neovim that
+  -- died without clearing its variables (the user vars would otherwise stay forever).
+  require_nvim_process = true,
+  -- Names the foreground process may have (lowercase, substring match). A Neovim inside tmux, over
+  -- ssh or in WSL is not the pane's foreground process: tmux / ssh / wsl.exe is, so they count
+  -- (with `allow-passthrough on` the status of a Neovim inside tmux reaches this config).
+  process_names = { "nvim", "tmux", "ssh", "wsl", "mosh" },
+  -- Mode code (first letters of Neovim's mode) -> label and ANSI colour for the right status.
+  modes = {
+    n = { "NORMAL", "Blue" },
+    i = { "INSERT", "Green" },
+    v = { "VISUAL", "Fuchsia" },
+    V = { "V-LINE", "Fuchsia" },
+    -- terminal.nvim spells the control-character modes out: CTRL-V -> "^V", CTRL-S -> "^S"
+    -- (a prefix match: "^Vs" is Visual-block started from Select).
+    ["^V"] = { "V-BLOCK", "Fuchsia" },
+    ["^S"] = { "SELECT", "Fuchsia" },
+    s = { "SELECT", "Fuchsia" },
+    S = { "S-LINE", "Fuchsia" },
+    R = { "REPLACE", "Red" },
+    c = { "COMMAND", "Yellow" },
+    t = { "TERMINAL", "Aqua" },
+    nt = { "TERM-N", "Aqua" },
+    no = { "OP-PEND", "Blue" },
+  },
+  -- Segment switches for the right status.
+  show_mode = true,
+  show_branch = true,
+  show_diagnostics = true,
+  show_recording = true,
+  -- Icon prefixes; set to "" for none. (Needs a font with the Nerd symbols for the default.)
+  branch_icon = " ",
 }
 
 --- Override options.
 ---@param opts table|nil
 function M.setup(opts)
-	for k, v in pairs(opts or {}) do
-		M.opts[k] = v
-	end
+  for k, v in pairs(opts or {}) do
+    M.opts[k] = v
+  end
 end
 
 ---@param s any
 ---@param max integer
 ---@return string
 local function clean(s, max)
-	if type(s) ~= "string" then
-		return ""
-	end
-	s = s:gsub("[%z\1-\31\127]", "?")
-	-- Not valid UTF-8 (a foreign writer, a cut in the middle of a character): show nothing rather
-	-- than hand the renderer bytes it cannot take.
-	if type(utf8) == "table" and utf8.len(s) == nil then
-		return ""
-	end
-	if #s > max then
-		-- Cut at a character boundary: step back over continuation bytes (10xxxxxx).
-		local cut = max
-		while cut > 0 do
-			local b = s:byte(cut + 1)
-			if b and b >= 0x80 and b < 0xC0 then
-				cut = cut - 1
-			else
-				break
-			end
-		end
-		s = s:sub(1, cut)
-	end
-	return s
+  if type(s) ~= "string" then
+    return ""
+  end
+  s = s:gsub("[%z\1-\31\127]", "?")
+  -- Not valid UTF-8 (a foreign writer, a cut in the middle of a character): show nothing rather
+  -- than hand the renderer bytes it cannot take.
+  if type(utf8) == "table" and utf8.len(s) == nil then
+    return ""
+  end
+  if #s > max then
+    -- Cut at a character boundary: step back over continuation bytes (10xxxxxx).
+    local cut = max
+    while cut > 0 do
+      local b = s:byte(cut + 1)
+      if b and b >= 0x80 and b < 0xC0 then
+        cut = cut - 1
+      else
+        break
+      end
+    end
+    s = s:sub(1, cut)
+  end
+  return s
 end
 
 --- The user variables of a pane. A `Pane` (update-status, key callbacks) has `get_user_vars()`;
@@ -103,172 +103,172 @@ end
 ---@param pane any
 ---@return table|nil
 local function user_vars(pane)
-	local ok, vars = pcall(function()
-		return pane:get_user_vars()
-	end)
-	if ok and type(vars) == "table" then
-		return vars
-	end
-	local field_ok, field = pcall(function()
-		return pane.user_vars
-	end)
-	if field_ok and type(field) == "table" then
-		return field
-	end
-	return nil
+  local ok, vars = pcall(function()
+    return pane:get_user_vars()
+  end)
+  if ok and type(vars) == "table" then
+    return vars
+  end
+  local field_ok, field = pcall(function()
+    return pane.user_vars
+  end)
+  if field_ok and type(field) == "table" then
+    return field
+  end
+  return nil
 end
 
 ---@param n any
 ---@return integer
 local function count(n)
-	if type(n) ~= "number" or n ~= n or n < 0 then
-		return 0
-	end
-	return math.min(math.floor(n), 99999)
+  if type(n) ~= "number" or n ~= n or n < 0 then
+    return 0
+  end
+  return math.min(math.floor(n), 99999)
 end
 
 --- Whether the pane's foreground process looks like Neovim.
 ---@param pane any
 ---@return boolean
 local function process_is_nvim(pane)
-	local ok, name = pcall(function()
-		return pane:get_foreground_process_name()
-	end)
-	if not (ok and type(name) == "string" and name ~= "") then
-		-- A PaneInformation snapshot carries the name as a field.
-		local field_ok, field = pcall(function()
-			return pane.foreground_process_name
-		end)
-		ok, name = field_ok, field
-	end
-	if not ok or type(name) ~= "string" or name == "" then
-		-- Unknown (remote domain, no permission): do not hide a status that may be right.
-		return true
-	end
-	name = name:lower()
-	for _, want in ipairs(M.opts.process_names) do
-		if name:find(want, 1, true) then
-			return true
-		end
-	end
-	return false
+  local ok, name = pcall(function()
+    return pane:get_foreground_process_name()
+  end)
+  if not (ok and type(name) == "string" and name ~= "") then
+    -- A PaneInformation snapshot carries the name as a field.
+    local field_ok, field = pcall(function()
+      return pane.foreground_process_name
+    end)
+    ok, name = field_ok, field
+  end
+  if not ok or type(name) ~= "string" or name == "" then
+    -- Unknown (remote domain, no permission): do not hide a status that may be right.
+    return true
+  end
+  name = name:lower()
+  for _, want in ipairs(M.opts.process_names) do
+    if name:find(want, 1, true) then
+      return true
+    end
+  end
+  return false
 end
 
 --- The status of the Neovim in `pane`, or nil.
 ---@param pane any
 ---@return table|nil
 function M.read(pane)
-	local vars = user_vars(pane)
-	if vars == nil then
-		return nil
-	end
-	if vars.MUX_NVIM ~= "1" then
-		return nil
-	end
-	local raw = vars.MUX_STATUS
-	if type(raw) ~= "string" or raw == "" or #raw > M.opts.max_bytes then
-		return nil
-	end
-	local parsed_ok, data = pcall(wezterm.json_parse, raw)
-	if not parsed_ok or type(data) ~= "table" then
-		return nil
-	end
-	if type(data.v) ~= "number" or data.v > M.opts.max_version then
-		return nil
-	end
-	if M.opts.require_nvim_process and not process_is_nvim(pane) then
-		return nil
-	end
-	return {
-		mode = clean(data.mode, 4),
-		file = clean(data.file, 120),
-		ft = clean(data.ft, 40),
-		cwd = clean(data.cwd, 200),
-		branch = clean(data.branch, 80),
-		e = count(data.e),
-		w = count(data.w),
-		i = count(data.i),
-		h = count(data.h),
-		rec = clean(data.rec, 4),
-		mod = data.mod == true,
-	}
+  local vars = user_vars(pane)
+  if vars == nil then
+    return nil
+  end
+  if vars.MUX_NVIM ~= "1" then
+    return nil
+  end
+  local raw = vars.MUX_STATUS
+  if type(raw) ~= "string" or raw == "" or #raw > M.opts.max_bytes then
+    return nil
+  end
+  local parsed_ok, data = pcall(wezterm.json_parse, raw)
+  if not parsed_ok or type(data) ~= "table" then
+    return nil
+  end
+  if type(data.v) ~= "number" or data.v > M.opts.max_version then
+    return nil
+  end
+  if M.opts.require_nvim_process and not process_is_nvim(pane) then
+    return nil
+  end
+  return {
+    mode = clean(data.mode, 4),
+    file = clean(data.file, 120),
+    ft = clean(data.ft, 40),
+    cwd = clean(data.cwd, 200),
+    branch = clean(data.branch, 80),
+    e = count(data.e),
+    w = count(data.w),
+    i = count(data.i),
+    h = count(data.h),
+    rec = clean(data.rec, 4),
+    mod = data.mod == true,
+  }
 end
 
 --- Whether the pane runs a Neovim that publishes status (for key handling).
 ---@param pane any
 ---@return boolean
 function M.is_nvim(pane)
-	local vars = user_vars(pane)
-	return vars ~= nil and vars.MUX_NVIM == "1" and process_is_nvim(pane)
+  local vars = user_vars(pane)
+  return vars ~= nil and vars.MUX_NVIM == "1" and process_is_nvim(pane)
 end
 
 --- The text for a tab title: file name, a `+` when modified, error/warning counts.
 ---@param st table
 ---@return string
 function M.tab_title(st)
-	local parts = { st.file ~= "" and st.file or "nvim" }
-	if st.mod then
-		parts[#parts + 1] = "+"
-	end
-	if st.e > 0 then
-		parts[#parts + 1] = "E" .. st.e
-	end
-	if st.w > 0 then
-		parts[#parts + 1] = "W" .. st.w
-	end
-	return table.concat(parts, " ")
+  local parts = { st.file ~= "" and st.file or "nvim" }
+  if st.mod then
+    parts[#parts + 1] = "+"
+  end
+  if st.e > 0 then
+    parts[#parts + 1] = "E" .. st.e
+  end
+  if st.w > 0 then
+    parts[#parts + 1] = "W" .. st.w
+  end
+  return table.concat(parts, " ")
 end
 
 ---@param mode string
 ---@return string label
 ---@return string color
 local function mode_chip(mode)
-	-- Exact code first, then a two-character prefix (`no`, `nov`, `noV`, `no^V` are operator-pending;
-	-- `nt`, `ntT` terminal-normal; `^Vs`), then the first character (`niI` -> `n`, `Vs` -> `V`).
-	local modes = M.opts.modes
-	local m = modes[mode] or modes[mode:sub(1, 2)] or modes[mode:sub(1, 1)]
-	if m then
-		return m[1], m[2]
-	end
-	return mode:upper(), "Silver"
+  -- Exact code first, then a two-character prefix (`no`, `nov`, `noV`, `no^V` are operator-pending;
+  -- `nt`, `ntT` terminal-normal; `^Vs`), then the first character (`niI` -> `n`, `Vs` -> `V`).
+  local modes = M.opts.modes
+  local m = modes[mode] or modes[mode:sub(1, 2)] or modes[mode:sub(1, 1)]
+  if m then
+    return m[1], m[2]
+  end
+  return mode:upper(), "Silver"
 end
 
 --- Items for `wezterm.format()`: mode chip, branch, diagnostics, recording.
 ---@param st table|nil
 ---@return table items Empty when `st` is nil
 function M.right_status(st)
-	local items = {}
-	if not st then
-		return items
-	end
-	local o = M.opts
-	if o.show_recording and st.rec ~= "" then
-		items[#items + 1] = { Foreground = { AnsiColor = "Red" } }
-		items[#items + 1] = { Text = " REC @" .. st.rec .. " " }
-	end
-	if o.show_diagnostics and (st.e + st.w + st.i + st.h) > 0 then
-		if st.e > 0 then
-			items[#items + 1] = { Foreground = { AnsiColor = "Red" } }
-			items[#items + 1] = { Text = " E" .. st.e }
-		end
-		if st.w > 0 then
-			items[#items + 1] = { Foreground = { AnsiColor = "Yellow" } }
-			items[#items + 1] = { Text = " W" .. st.w }
-		end
-		items[#items + 1] = { Text = " " }
-	end
-	if o.show_branch and st.branch ~= "" then
-		items[#items + 1] = { Foreground = { AnsiColor = "Silver" } }
-		items[#items + 1] = { Text = " " .. o.branch_icon .. st.branch .. " " }
-	end
-	if o.show_mode and st.mode ~= "" then
-		local label, color = mode_chip(st.mode)
-		items[#items + 1] = { Foreground = { AnsiColor = color } }
-		items[#items + 1] = { Attribute = { Intensity = "Bold" } }
-		items[#items + 1] = { Text = " " .. label .. " " }
-		items[#items + 1] = "ResetAttributes"
-	end
-	return items
+  local items = {}
+  if not st then
+    return items
+  end
+  local o = M.opts
+  if o.show_recording and st.rec ~= "" then
+    items[#items + 1] = { Foreground = { AnsiColor = "Red" } }
+    items[#items + 1] = { Text = " REC @" .. st.rec .. " " }
+  end
+  if o.show_diagnostics and (st.e + st.w + st.i + st.h) > 0 then
+    if st.e > 0 then
+      items[#items + 1] = { Foreground = { AnsiColor = "Red" } }
+      items[#items + 1] = { Text = " E" .. st.e }
+    end
+    if st.w > 0 then
+      items[#items + 1] = { Foreground = { AnsiColor = "Yellow" } }
+      items[#items + 1] = { Text = " W" .. st.w }
+    end
+    items[#items + 1] = { Text = " " }
+  end
+  if o.show_branch and st.branch ~= "" then
+    items[#items + 1] = { Foreground = { AnsiColor = "Silver" } }
+    items[#items + 1] = { Text = " " .. o.branch_icon .. st.branch .. " " }
+  end
+  if o.show_mode and st.mode ~= "" then
+    local label, color = mode_chip(st.mode)
+    items[#items + 1] = { Foreground = { AnsiColor = color } }
+    items[#items + 1] = { Attribute = { Intensity = "Bold" } }
+    items[#items + 1] = { Text = " " .. label .. " " }
+    items[#items + 1] = "ResetAttributes"
+  end
+  return items
 end
 
 return M

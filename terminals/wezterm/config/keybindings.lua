@@ -13,14 +13,14 @@ local nvim_status = require("config.nvim_status")
 -- `shell_panes = "navigate"`, which makes them move between WezTerm panes like vim-tmux-navigator.
 -- <C-l> is not bound: it stays the shell's clear-screen (terminal.nvim's `window_right` is off too).
 local NAVIGATION = {
-	enabled = true,
-	mods = "CTRL",
-	keys = { h = "Left", j = "Down", k = "Up" },
-	shell_panes = "send", -- "send" | "navigate"
-	-- Always-on way out of any pane (also a shell pane and for <l>): moves WezTerm's pane focus and never
-	-- sends the key on. `false` removes it.
-	escape_mods = "CTRL|ALT",
-	escape_keys = { h = "Left", j = "Down", k = "Up", l = "Right" },
+  enabled = true,
+  mods = "CTRL",
+  keys = { h = "Left", j = "Down", k = "Up" },
+  shell_panes = "send", -- "send" | "navigate"
+  -- Always-on way out of any pane (also a shell pane and for <l>): moves WezTerm's pane focus and never
+  -- sends the key on. `false` removes it.
+  escape_mods = "CTRL|ALT",
+  escape_keys = { h = "Left", j = "Down", k = "Up", l = "Right" },
 }
 
 -- local function bind(keys, key, mods, dir)
@@ -30,112 +30,112 @@ local NAVIGATION = {
 --@param Config WezTerm.Config
 --@return nil
 return function(Config)
-	--- Define custom keybindings
-	Config.keys = {
+  --- Define custom keybindings
+  Config.keys = {
 
-		-- Sendet Shift + Enter an Terminals (nvim) weiter
-		{
-			key = "Enter",
-			mods = "SHIFT",
-			action = wezterm.action.SendString("\x1b[13;2u"), -- CSI u: S-Enter
-		},
+    -- Sendet Shift + Enter an Terminals (nvim) weiter
+    {
+      key = "Enter",
+      mods = "SHIFT",
+      action = wezterm.action.SendString("\x1b[13;2u"), -- CSI u: S-Enter
+    },
 
-		{
-			key = "R",
-			mods = "CTRL",
-			action = wezterm.action.ShowDebugOverlay,
-		},
+    {
+      key = "R",
+      mods = "CTRL",
+      action = wezterm.action.ShowDebugOverlay,
+    },
 
-		-- Sicherstellen, dass die Default-Aktion für CTRL+SHIFT+N nicht greift (wird neu gesetzt mit custom width & heigt)
-		{
-			key = "n",
-			mods = "CTRL|SHIFT",
-			action = act.DisableDefaultAssignment,
-		},
+    -- Sicherstellen, dass die Default-Aktion für CTRL+SHIFT+N nicht greift (wird neu gesetzt mit custom width & heigt)
+    {
+      key = "n",
+      mods = "CTRL|SHIFT",
+      action = act.DisableDefaultAssignment,
+    },
 
-		{
-			key = "Tab",
-			mods = "CTRL",
-			action = act.DisableDefaultAssignment,
-		},
+    {
+      key = "Tab",
+      mods = "CTRL",
+      action = act.DisableDefaultAssignment,
+    },
 
-		-- WezTerm's builtin default binds plain CTRL+V to PasteFrom('Clipboard'),
-		-- which swallows the keystroke before it ever reaches the terminal app.
-		-- Neovim's own <C-v> (Visual Block mode) never sees it as a result.
-		-- act.DisableDefaultAssignment does NOT clear this specific builtin (it
-		-- still shows up in `wezterm show-keys --lua` afterwards, unlike e.g. the
-		-- CTRL+Tab disable above) -- so force the raw keystroke through instead
-		-- of asking wezterm to "not do the default". Paste stays available via
-		-- the explicit CTRL+SHIFT+V binding below (config/terminal_safety.lua).
-		{
-			key = "V",
-			mods = "CTRL",
-			action = act.SendKey({ key = "V", mods = "CTRL" }),
-		},
+    -- WezTerm's builtin default binds plain CTRL+V to PasteFrom('Clipboard'),
+    -- which swallows the keystroke before it ever reaches the terminal app.
+    -- Neovim's own <C-v> (Visual Block mode) never sees it as a result.
+    -- act.DisableDefaultAssignment does NOT clear this specific builtin (it
+    -- still shows up in `wezterm show-keys --lua` afterwards, unlike e.g. the
+    -- CTRL+Tab disable above) -- so force the raw keystroke through instead
+    -- of asking wezterm to "not do the default". Paste stays available via
+    -- the explicit CTRL+SHIFT+V binding below (config/terminal_safety.lua).
+    {
+      key = "V",
+      mods = "CTRL",
+      action = act.SendKey({ key = "V", mods = "CTRL" }),
+    },
 
-		-- Unser Mapping: Event auslösen -> Handler spawnt und platziert Fenster
-		{
-			key = "n",
-			mods = "CTRL|SHIFT",
-			action = act.EmitEvent("spawn_sized_window"),
-		},
+    -- Unser Mapping: Event auslösen -> Handler spawnt und platziert Fenster
+    {
+      key = "n",
+      mods = "CTRL|SHIFT",
+      action = act.EmitEvent("spawn_sized_window"),
+    },
 
-		{
-			key = "LeftArrow",
-			mods = "CTRL|SHIFT",
-			action = wezterm.action.ActivateTabRelative(-1),
-		},
-		-- STRG + SHIFT + Pfeil rechts → nächster Tab
-		{
-			key = "RightArrow",
-			mods = "CTRL|SHIFT",
-			action = wezterm.action.ActivateTabRelative(1),
-		},
+    {
+      key = "LeftArrow",
+      mods = "CTRL|SHIFT",
+      action = wezterm.action.ActivateTabRelative(-1),
+    },
+    -- STRG + SHIFT + Pfeil rechts → nächster Tab
+    {
+      key = "RightArrow",
+      mods = "CTRL|SHIFT",
+      action = wezterm.action.ActivateTabRelative(1),
+    },
 
-		{
-			key = "w",
-			mods = "CTRL|SHIFT|ALT",
-			action = wezterm.action.CloseCurrentPane({ confirm = true }),
-		},
-		{
-			key = "L",
-			mods = "CTRL|SHIFT",
-			action = wezterm.action.ShowLauncher,
-		},
-	}
+    {
+      key = "w",
+      mods = "CTRL|SHIFT|ALT",
+      action = wezterm.action.CloseCurrentPane({ confirm = true }),
+    },
+    {
+      key = "L",
+      mods = "CTRL|SHIFT",
+      action = wezterm.action.ShowLauncher,
+    },
+  }
 
-	if NAVIGATION.enabled then
-		for key, direction in pairs(NAVIGATION.keys) do
-			Config.keys[#Config.keys + 1] = {
-				key = key,
-				mods = NAVIGATION.mods,
-				action = wezterm.action_callback(function(window, pane)
-					-- With `shell_panes = "send"` (the default) both branches would do the same, so the pane
-					-- is not even looked at: `is_nvim` reads user vars and asks the OS for the pane's
-					-- foreground process, on the GUI thread, on every key repeat.
-					if NAVIGATION.shell_panes ~= "navigate" or nvim_status.is_nvim(pane) then
-						window:perform_action(act.SendKey({ key = key, mods = NAVIGATION.mods }), pane)
-					else
-						window:perform_action(act.ActivatePaneDirection(direction), pane)
-					end
-				end),
-			}
-		end
-	end
+  if NAVIGATION.enabled then
+    for key, direction in pairs(NAVIGATION.keys) do
+      Config.keys[#Config.keys + 1] = {
+        key = key,
+        mods = NAVIGATION.mods,
+        action = wezterm.action_callback(function(window, pane)
+          -- With `shell_panes = "send"` (the default) both branches would do the same, so the pane
+          -- is not even looked at: `is_nvim` reads user vars and asks the OS for the pane's
+          -- foreground process, on the GUI thread, on every key repeat.
+          if NAVIGATION.shell_panes ~= "navigate" or nvim_status.is_nvim(pane) then
+            window:perform_action(act.SendKey({ key = key, mods = NAVIGATION.mods }), pane)
+          else
+            window:perform_action(act.ActivatePaneDirection(direction), pane)
+          end
+        end),
+      }
+    end
+  end
 
-	if NAVIGATION.enabled and NAVIGATION.escape_mods then
-		for key, direction in pairs(NAVIGATION.escape_keys) do
-			Config.keys[#Config.keys + 1] = {
-				key = key,
-				mods = NAVIGATION.escape_mods,
-				action = act.ActivatePaneDirection(direction),
-			}
-		end
-	end
+  if NAVIGATION.enabled and NAVIGATION.escape_mods then
+    for key, direction in pairs(NAVIGATION.escape_keys) do
+      Config.keys[#Config.keys + 1] = {
+        key = key,
+        mods = NAVIGATION.escape_mods,
+        action = act.ActivatePaneDirection(direction),
+      }
+    end
+  end
 
-	-- Workaround (windows)
-	-- bind(Config.keys, "k", "CTRL|SHIFT|ALT", "Up")
-	-- bind(Config.keys, "h", "CTRL|SHIFT|ALT", "Left")
-	-- bind(Config.keys, "j", "CTRL|SHIFT|ALT", "Down")
-	-- bind(Config.keys, "l", "CTRL|SHIFT|ALT", "Right")
+  -- Workaround (windows)
+  -- bind(Config.keys, "k", "CTRL|SHIFT|ALT", "Up")
+  -- bind(Config.keys, "h", "CTRL|SHIFT|ALT", "Left")
+  -- bind(Config.keys, "j", "CTRL|SHIFT|ALT", "Down")
+  -- bind(Config.keys, "l", "CTRL|SHIFT|ALT", "Right")
 end

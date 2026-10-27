@@ -20,15 +20,15 @@ return function(Config)
   -- Problem: Bei Fokuswechsel kann der Mode-Toggle als Text durchkommen.
   -- Lösung: WezTerm übernimmt Paste-Handling, Terminal bleibt "dumb".
   ---------------------------------------------------------------------------
-  Config.enable_kitty_keyboard = false  -- Verhindert erweiterte Key-Protokolle
+  Config.enable_kitty_keyboard = false -- Verhindert erweiterte Key-Protokolle
 
   ---------------------------------------------------------------------------
   -- 🟡 IME & Dead Keys (Windows-spezifisch)
   --
   -- Windows Input Method Editor (IME) kann bei Fokuswechsel partial states hinterlassen.
   ---------------------------------------------------------------------------
-  Config.use_ime = false                -- IME komplett deaktivieren
-  Config.use_dead_keys = false          -- Keine Compose-Sequenzen (´ + e = é)
+  Config.use_ime = false -- IME komplett deaktivieren
+  Config.use_dead_keys = false -- Keine Compose-Sequenzen (´ + e = é)
 
   ---------------------------------------------------------------------------
   -- 🟢 Alt/Meta Key Handling
@@ -90,17 +90,17 @@ return function(Config)
   -- Bei jedem Fokuswechsel alle optionalen Modi zurücksetzen.
   ---------------------------------------------------------------------------
   -- wezterm.on("window-focus-changed", function(window, pane)
-    -- if not window:is_focused() then
-      -- return  -- Nur bei Focus-Gain relevant
-    -- end
+  -- if not window:is_focused() then
+  -- return  -- Nur bei Focus-Gain relevant
+  -- end
 
-    -- -- Sende explizite Mode-Resets (sicher, auch wenn nicht gesetzt)
-    -- pane:inject_output("\x1b[?1004l")  -- Disable focus reporting
-    -- pane:inject_output("\x1b[?2004l")  -- Disable bracketed paste
-    -- pane:inject_output("\x1b[?1000l")  -- Disable mouse tracking (X10)
-    -- pane:inject_output("\x1b[?1002l")  -- Disable mouse tracking (button events)
-    -- pane:inject_output("\x1b[?1003l")  -- Disable mouse tracking (any event)
-    -- pane:inject_output("\x1b[?1006l")  -- Disable SGR mouse mode
+  -- -- Sende explizite Mode-Resets (sicher, auch wenn nicht gesetzt)
+  -- pane:inject_output("\x1b[?1004l")  -- Disable focus reporting
+  -- pane:inject_output("\x1b[?2004l")  -- Disable bracketed paste
+  -- pane:inject_output("\x1b[?1000l")  -- Disable mouse tracking (X10)
+  -- pane:inject_output("\x1b[?1002l")  -- Disable mouse tracking (button events)
+  -- pane:inject_output("\x1b[?1003l")  -- Disable mouse tracking (any event)
+  -- pane:inject_output("\x1b[?1006l")  -- Disable SGR mouse mode
   -- end)
 
   ---------------------------------------------------------------------------
@@ -125,7 +125,8 @@ return function(Config)
     mods = "CTRL|SHIFT|ALT",
     action = act.EmitEvent("debug-escape-sequences"),
   })
-  ]]--
+  ]]
+  --
 
   ---------------------------------------------------------------------------
   -- ✅ FINAL CHECKLIST

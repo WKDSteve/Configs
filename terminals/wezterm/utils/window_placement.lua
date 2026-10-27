@@ -41,7 +41,7 @@ local function apply_to_window(win, s, opts)
   win:set_inner_size(target_w, target_h)
   pcall(function()
     win:set_position(pos_x, pos_y)
-	end)
+  end)
 end
 
 --- Spawn a new window with initial position, then set inner size.

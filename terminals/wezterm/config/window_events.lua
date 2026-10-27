@@ -27,4 +27,3 @@ return function(_)
     placement.spawn_sized_window(defaults)
   end)
 end
-
