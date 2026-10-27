@@ -29,7 +29,7 @@ return function(Config)
     {
       name = "WSL:Arch",
       distribution = "archlinux",
-      username = "StefanBartl",
+      username = "wkdsteve",
       default_cwd = "~",
     },
   }
