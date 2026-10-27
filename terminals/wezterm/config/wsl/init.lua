@@ -29,7 +29,8 @@ return function(Config)
     {
       name = "WSL:Arch",
       distribution = "archlinux",
-      username = "wkdsteve",
+      -- No `username`: the default user of the distribution is used, which differs between machines
+      -- (wkdsteve here, the old GitHub name on a machine that was not converted).
       default_cwd = "~",
     },
   }
