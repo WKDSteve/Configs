@@ -171,6 +171,11 @@ Beim bloßen Namen (pwsh-Hook, zsh-Widget) bewusst nur Stufe 1 und 2: ein
 Tippfehler soll ein Fehler bleiben und nicht in einem überraschenden `cd`
 enden. `repo` darf großzügiger sein, weil der Aufruf dort explizit ist.
 
+Der bloße Name springt nur **ohne Argumente**. `testing ci trust ...` meint einen
+Befehl (hier `testing.nvim/bin/testing`), der gerade nicht im `PATH` steht: der
+pwsh-Hook meldet dann "command not found" und nennt das Repo, statt still nach
+`testing.nvim` zu wechseln und die Argumente zu verlieren.
+
 Nach jedem erfolgreichen Sprung ein `zoxide add <ziel>`, damit die Frecency
 lernt und `z` mit der Zeit von selbst richtig liegt.
 

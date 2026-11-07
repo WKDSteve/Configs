@@ -282,7 +282,18 @@ try {
                 $hits = @(Resolve-Repo -Query $CommandName -Strict)
                 if ($hits.Count -eq 1) {
                     $target = $hits[0]
-                    $EventArgs.CommandScriptBlock = { Set-RepoLocation $target }.GetNewClosure()
+                    $name = $CommandName
+                    # A call with arguments (`testing ci trust ...`) meant a command, not a jump: the block
+                    # receives the call's arguments, so it reports the missing command instead of silently
+                    # changing the directory and dropping them.
+                    $EventArgs.CommandScriptBlock = {
+                        if ($args.Count -gt 0) {
+                            Write-Error -Category ObjectNotFound -Message ("${name}: command not found " +
+                                "(no jump with arguments; '$name' alone changes to $target)")
+                            return
+                        }
+                        Set-RepoLocation $target
+                    }.GetNewClosure()
                     $EventArgs.StopSearch = $true
                     return
                 }
