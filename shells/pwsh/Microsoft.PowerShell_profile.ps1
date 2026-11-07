@@ -313,6 +313,92 @@ catch {
 }
 #endregion
 
+#region ── 11. testing: nvim direkt, ohne cmd.exe dazwischen ───────────────────
+# `testing ...` (testing.nvim) läuft sonst über bin\testing.cmd; ein Ctrl-C endet
+# dann mit der Frage "Batchvorgang abbrechen (J/N)?" von cmd.exe. Die Funktion
+# geht den gleichen Weg ohne cmd: sie findet testing.cmd über den PATH (bleibt
+# die eine Quelle) und ruft nvim mit dessen scripts\testing.lua direkt auf.
+# Keine neue Datei auf dem PATH, nichts Unsigniertes (Workstation).
+#
+# PowerShell nimmt einer Funktion das `--` weg (`testing ci commit <sha> --
+# --cached`); es wird aus dem Syntaxbaum des Aufrufs an seiner Stelle wieder
+# eingesetzt. Geht das nicht sicher (ein @splat vor dem `--`), bricht der
+# Aufruf mit Exit 2 ab, statt die Argumente zu verschieben.
+function testing {
+    $cmd = Get-Command -Name testing.cmd -CommandType Application -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    if (-not $cmd) {
+        # the bare word without the command was the repo jump (section 10): keep it
+        if ($args.Count -eq 0 -and (Get-Command Resolve-Repo -ErrorAction SilentlyContinue)) {
+            $hits = @(Resolve-Repo -Query 'testing' -Strict)
+            if ($hits.Count -eq 1) {
+                Set-RepoLocation $hits[0]
+                return
+            }
+        }
+        [Console]::Error.WriteLine('testing: testing.cmd is not on the PATH (testing.nvim\bin): nothing ran')
+        $global:LASTEXITCODE = 3
+        return
+    }
+    $lua = Join-Path (Split-Path -Parent $cmd.Source) '..\scripts\testing.lua'
+    if (-not (Test-Path -LiteralPath $lua)) {
+        [Console]::Error.WriteLine("testing: cannot find $lua`: put the bin folder of a testing.nvim checkout on the PATH")
+        $global:LASTEXITCODE = 3
+        return
+    }
+    if (-not (Get-Command -Name nvim -CommandType Application -ErrorAction SilentlyContinue)) {
+        [Console]::Error.WriteLine('testing: nvim is not on the PATH: nothing ran')
+        $global:LASTEXITCODE = 3
+        return
+    }
+
+    $argv = [System.Collections.Generic.List[string]]::new()
+    foreach ($a in $args) { $argv.Add([string]$a) }
+
+    # the `--` PowerShell kept for itself: find this call in the line and put it back
+    # read both here: inside the FindAll filter $MyInvocation is that script block's own
+    $line = $MyInvocation.Line
+    $start = $MyInvocation.OffsetInLine - 1
+    if ($line -and $line.Contains('--')) {
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput($line, [ref]$null, [ref]$null)
+        $call = $ast.FindAll({
+                param($n)
+                $n -is [System.Management.Automation.Language.CommandAst] -and $n.Extent.StartOffset -eq $start
+            }, $true) | Select-Object -First 1
+        if ($call) {
+            $elements = @($call.CommandElements | Select-Object -Skip 1)
+            $at = -1
+            for ($i = 0; $i -lt $elements.Count; $i++) {
+                $e = $elements[$i]
+                if ($e -is [System.Management.Automation.Language.CommandParameterAst] -and $e.Extent.Text -eq '--') {
+                    $at = $i
+                    break
+                }
+            }
+            if ($at -ge 0) {
+                $before = @($elements | Select-Object -First $at)
+                $splat = $before | Where-Object {
+                    $_ -is [System.Management.Automation.Language.VariableExpressionAst] -and $_.Splatted
+                }
+                if ($splat) {
+                    [Console]::Error.WriteLine("testing: cannot place '--' after a @splat: call testing.cmd for this one")
+                    $global:LASTEXITCODE = 2
+                    return
+                }
+                $argv.Insert([Math]::Min($at, $argv.Count), '--')
+            }
+        }
+    }
+
+    & nvim -n -i NONE --headless -u NONE -l $lua @argv
+    $rc = $LASTEXITCODE
+    if ($rc -lt 0 -or $rc -gt 3) {
+        [Console]::Error.WriteLine("testing: nvim ended with exit code $rc and no verdict (crash?)")
+    }
+    $global:LASTEXITCODE = $rc
+}
+#endregion
+
 # Import the Chocolatey Profile that contains the necessary code to enable
 # tab-completions to function for `choco`.
 # Be aware that if you are missing these lines from your profile, tab completion

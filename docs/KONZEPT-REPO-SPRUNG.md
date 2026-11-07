@@ -176,6 +176,12 @@ Befehl (hier `testing.nvim/bin/testing`), der gerade nicht im `PATH` steht: der
 pwsh-Hook meldet dann "command not found" und nennt das Repo, statt still nach
 `testing.nvim` zu wechseln und die Argumente zu verlieren.
 
+`testing` ist seit Abschnitt 11 des pwsh-Profils eine Funktion (nvim direkt,
+ohne die Frage "Batchvorgang abbrechen (J/N)?" von cmd.exe nach Ctrl-C). Der
+Hook sieht das Wort daher nie; dieselbe Regel steckt in der Funktion: steht
+`testing.cmd` nicht im `PATH`, springt das bloße `testing` nach `testing.nvim`,
+mit Argumenten meldet es den fehlenden Befehl.
+
 Nach jedem erfolgreichen Sprung ein `zoxide add <ziel>`, damit die Frecency
 lernt und `z` mit der Zeit von selbst richtig liegt.
 
