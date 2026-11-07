@@ -356,9 +356,18 @@ function testing {
     foreach ($a in $args) { $argv.Add([string]$a) }
 
     # the `--` PowerShell kept for itself: find this call in the line and put it back
-    # read both here: inside the FindAll filter $MyInvocation is that script block's own
-    $line = $MyInvocation.Line
-    $start = $MyInvocation.OffsetInLine - 1
+    # read both here: inside the FindAll filter $MyInvocation is that script block's own.
+    # Statement (PowerShell 7.4+) is this call alone, also across lines (backtick); Line
+    # (Windows PowerShell 5.1) holds only the first line of such a call, so there a `--`
+    # on a later line is lost; this profile is pwsh's (Documents\PowerShell) anyway.
+    if ($MyInvocation.PSObject.Properties['Statement'] -and $MyInvocation.Statement) {
+        $line = $MyInvocation.Statement
+        $start = 0
+    }
+    else {
+        $line = $MyInvocation.Line
+        $start = $MyInvocation.OffsetInLine - 1
+    }
     if ($line -and $line.Contains('--')) {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput($line, [ref]$null, [ref]$null)
         $call = $ast.FindAll({
