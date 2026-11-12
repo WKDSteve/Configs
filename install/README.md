@@ -14,10 +14,6 @@ die Dateien selbst bleiben im Repo.
 > **Was der Installer nicht tut:** Programme installieren. Wählst du `kitty`,
 > wird `kitty.conf` verlinkt — kitty selbst bringt dein Paketmanager. Fehlt das
 > Programm im PATH, weist der Installer darauf hin und verlinkt trotzdem.
-> Die Programme selbst (wezterm, lazygit, rg, gh, … und alles, was die
-> nvim-Plugins brauchen) installiert mit einem Befehl
-> `scripts/install-tools/install-tools.ps1` bzw. `install-tools.sh` der
-> nvim-Config, bevorzugt per winget (siehe dortiges README).
 
 ## Voraussetzung
 
